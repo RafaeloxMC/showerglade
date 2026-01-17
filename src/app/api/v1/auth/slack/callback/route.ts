@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 	if (error) {
 		return NextResponse.redirect(
 			`${
-				process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+				process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"
 			}/auth/login?error=access_denied`,
 		);
 	}
