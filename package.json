@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "bun server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production bun server.js",
     "lint": "eslint"
   },
   "dependencies": {

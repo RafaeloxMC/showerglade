@@ -21,14 +21,14 @@ export async function GET(request: NextRequest) {
 	if (!code) {
 		return NextResponse.redirect(
 			`${
-				process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+				process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"
 			}/auth/login?error=no_code`,
 		);
 	}
 
 	try {
 		const tokenResponse = await fetch(
-			"https://slack.com/api/openid.connect.token",
+			"https://slack.com/api/oauth.v2.access",
 			{
 				method: "POST",
 				headers: {
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 					code,
 					redirect_uri: `${
 						process.env.NEXT_PUBLIC_BASE_URL ||
-						"http://localhost:3000"
+						"https://localhost:3000"
 					}/api/v1/auth/slack/callback`,
 				}),
 			},
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
 			console.error("Slack OAuth error:", tokenData);
 			return NextResponse.redirect(
 				`${
-					process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+					process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"
 				}/auth/login?error=oauth_error`,
 			);
 		}
@@ -69,11 +69,11 @@ export async function GET(request: NextRequest) {
 
 		const userData = await userResponse.json();
 
-		if (!userData.ok) {
+		if (!userData.sub) {
 			console.error("Slack user info error:", userData);
 			return NextResponse.redirect(
 				`${
-					process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+					process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"
 				}/auth/login?error=user_info_error`,
 			);
 		}
@@ -117,8 +117,8 @@ export async function GET(request: NextRequest) {
 			name: "shovergladeCookie",
 			value: token,
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: true,
+			secure: true,
+			sameSite: "lax",
 			maxAge: cookieMaxAge,
 			expires: cookieExpires,
 			path: "/",
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.redirect(
 			`${
 				process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"
-			}/auth/login?error=server_error`,
+			}/login?error=server_error`,
 		);
 	}
 }
