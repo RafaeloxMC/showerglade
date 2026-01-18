@@ -80,9 +80,6 @@ export async function GET(request: NextRequest) {
 
 		await connectDB();
 
-		// TODO: Remove later!
-		console.log(userData);
-
 		const user = (await User.findOneAndUpdate(
 			{ slackId: userData.sub },
 			{
