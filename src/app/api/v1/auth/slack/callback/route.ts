@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 			"https://slack.com/api/openid.connect.userInfo",
 			{
 				headers: {
-					Authorization: `Bearer ${tokenData.authed_user.access_token}`,
+					Authorization: `Bearer ${tokenData.access_token}`,
 				},
 			},
 		);
@@ -129,8 +129,8 @@ export async function GET(request: NextRequest) {
 		console.error("OAuth callback error:", error);
 		return NextResponse.redirect(
 			`${
-				process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-			}/login?error=server_error`,
+				process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"
+			}/auth/login?error=server_error`,
 		);
 	}
 }
