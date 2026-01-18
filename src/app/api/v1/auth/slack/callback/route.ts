@@ -1,7 +1,7 @@
-import { connectDB } from "@/src/database/db";
-import Session from "@/src/database/schemas/Session";
-import User, { IUser } from "@/src/database/schemas/User";
-import { generateTokenWithExpiry } from "@/src/util/tokens";
+import { connectDB } from "@/database/db";
+import Session from "@/database/schemas/Session";
+import User, { IUser } from "@/database/schemas/User";
+import { generateTokenWithExpiry } from "@/util/tokens";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
