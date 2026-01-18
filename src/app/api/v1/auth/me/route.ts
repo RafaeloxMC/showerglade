@@ -1,4 +1,4 @@
-import { authenticateUser } from "@/middleware";
+import { authenticateUser } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

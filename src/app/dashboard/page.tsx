@@ -1,18 +1,44 @@
 "use client";
 
-import { IUser } from "@/database/schemas/User";
+import { connectDB } from "@/database/db";
+import Session from "@/database/schemas/Session";
+import User, { IUser } from "@/database/schemas/User";
+import { cookies } from "next/headers";
 import { useEffect, useState } from "react";
 
 function DashboardPage() {
-	const [user, setUser] = useState<IUser | undefined>(undefined);
+	const [user, setUser] = useState<IUser | null>(null);
+
+	const getAuthenticatedUser = async () => {
+		try {
+			const cookieStore = await cookies();
+			const token = cookieStore.get("shovergladeCookie")?.value;
+
+			if (!token) {
+				return null;
+			}
+
+			await connectDB();
+
+			const session = await Session.findOne({
+				token,
+				expiresAt: { $gt: new Date() },
+			});
+
+			if (!session) {
+				return null;
+			}
+
+			const user = await User.findById(session.userId);
+			return user as IUser;
+		} catch (error) {
+			console.error("Authentication error:", error);
+			return null;
+		}
+	};
 
 	const fetchUser = async () => {
-		const res = await fetch("/api/v1/auth/me", { credentials: "include" });
-		if (res.status == 200) {
-			const body = await res.json();
-			console.log("AUTH REQUEST BODY: " + body);
-			setUser(body);
-		}
+		setUser(await getAuthenticatedUser());
 	};
 
 	useEffect(() => {

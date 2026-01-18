@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
 			{ upsert: true, new: true },
 		)) as IUser;
 
-		const { token, expiresAt } = generateTokenWithExpiry(24 * 7);
+		const { token, expiresAt } = await generateTokenWithExpiry(24 * 7);
 
 		await Session.create({
 			token,

@@ -1,11 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import User, { IUser } from "./database/schemas/User";
-import { connectDB } from "./database/db";
-import Session from "./database/schemas/Session";
-
-export interface AuthenticatedRequest extends NextRequest {
-	user?: IUser;
-}
+import { NextRequest } from "next/server";
+import { connectDB } from "@/database/db";
+import Session from "@/database/schemas/Session";
+import User, { IUser } from "@/database/schemas/User";
 
 export async function authenticateUser(
 	request: NextRequest,
@@ -14,12 +10,9 @@ export async function authenticateUser(
 		let token = request.cookies.get("shovergladeCookie")?.value;
 
 		if (!token) {
-			console.log("No shibaCookie found!");
 			const authHeader = request.headers.get("Authorization");
 			if (authHeader?.startsWith("Bearer ")) {
 				token = authHeader.substring(7);
-			} else {
-				console.log("No auth header found!");
 			}
 		}
 
@@ -65,9 +58,4 @@ export async function requireAuth(
 	}
 
 	return { user };
-}
-
-export function middleware(request: NextRequest) {
-	const res = NextResponse.next();
-	return res;
 }
