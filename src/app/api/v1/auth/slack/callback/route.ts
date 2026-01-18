@@ -84,11 +84,11 @@ export async function GET(request: NextRequest) {
 		console.log(userData);
 
 		const user = (await User.findOneAndUpdate(
-			{ slackId: userData.user.id },
+			{ slackId: userData.sub },
 			{
-				slackId: userData.user.id,
-				name: userData.user.name,
-				avatar: userData.user.image_192,
+				slackId: userData.sub,
+				name: userData.name,
+				avatar: userData.picture,
 				updatedAt: new Date(),
 			},
 			{ upsert: true, new: true },
