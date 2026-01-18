@@ -1,3 +1,4 @@
+import { Slack } from "lucide-react";
 import Link from "next/link";
 
 function LoginPage() {
@@ -10,9 +11,10 @@ function LoginPage() {
 				<Link
 					href="/api/v1/auth/slack"
 					prefetch={false}
-					className="py-2 px-4 bg-purple-700 rounded-xl max-w-36 text-center"
+					className="flex flex-row gap-2 items-center justify-center bg-purple-600 rounded-xl py-4 px-6 text-2xl font-extrabold text-center mt-4"
 				>
-					Login
+					<Slack />
+					Sign In
 				</Link>
 			</main>
 		</div>
