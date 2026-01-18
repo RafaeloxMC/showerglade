@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/database/db";
 import User from "@/database/models/User";
 import { cookies } from "next/headers";
-import { decode, JwtPayload } from "jsonwebtoken";
+import { verify, JwtPayload } from "jsonwebtoken";
 
 export async function GET() {
     const cookieStore = await cookies();
@@ -13,7 +13,9 @@ export async function GET() {
     }
 
     try {
-        const decoded = decode(token) as JwtPayload | null;
+        // Use verify instead of decode to ensure the token is valid and signed
+        const decoded = verify(token, process.env.JWT_SECRET || "default_secret") as JwtPayload;
+        
         if (!decoded || !decoded.userId) {
             return NextResponse.json({ user: null });
         }

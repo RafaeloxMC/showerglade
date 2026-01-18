@@ -94,6 +94,7 @@ export default function Dashboard() {
                 fetchSlots(true);
             }
         } catch (e) {
+            console.error(e);
             toast.error("Network error while booking");
         } finally {
             setIsSubmitting(false);
@@ -118,6 +119,7 @@ export default function Dashboard() {
                 fetchSlots(true);
             }
         } catch (e) {
+            console.error(e);
             toast.error("Network error while cancelling");
         } finally {
             setIsSubmitting(false);
@@ -148,9 +150,12 @@ export default function Dashboard() {
                 <div className="flex items-center gap-4">
                     <div className="hidden md:flex flex-col items-end">
                         <span className="text-sm font-medium">{user?.name}</span>
-                        <span className="text-xs text-zinc-500">Attendee</span>
+                        <span className="text-xs text-zinc-500">{user?.isAdmin ? "Admin" : "Attendee"}</span>
                     </div>
-                    {user?.avatar && <img src={user.avatar} alt="User" className="w-9 h-9 rounded-full border border-zinc-200" />}
+                    {user?.avatar && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img src={user.avatar} alt="User" className="w-9 h-9 rounded-full border border-zinc-200" />
+                    )}
                     <button
                         onClick={handleLogout}
                         className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors ml-2"
@@ -228,6 +233,7 @@ export default function Dashboard() {
                                                 {isBooked && slot.bookedBy && (
                                                     <div className="flex items-center gap-1.5 max-w-full overflow-hidden px-1">
                                                         {slot.bookedBy.avatar && (
+                                                            /* eslint-disable-next-line @next/next/no-img-element */
                                                             <img
                                                                 src={slot.bookedBy.avatar}
                                                                 alt={slot.bookedBy.name}

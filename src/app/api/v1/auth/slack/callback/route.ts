@@ -1,8 +1,6 @@
 import { connectDB } from "@/database/db";
-import Session from "@/database/schemas/Session";
-import User, { IUser } from "@/database/schemas/User";
-import { generateTokenWithExpiry } from "@/util/tokens";
-import { Types } from "mongoose";
+import User from "@/database/models/User";
+import { sign } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -80,48 +78,40 @@ export async function GET(request: NextRequest) {
 
 		await connectDB();
 
-		const user = (await User.findOneAndUpdate(
+        // Check against admin list in env
+        const adminIds = (process.env.ADMIN_SLACK_IDS || "").split(",").map(id => id.trim());
+        const isAdmin = adminIds.includes(userData.sub);
+
+		const user = await User.findOneAndUpdate(
 			{ slackId: userData.sub },
 			{
 				slackId: userData.sub,
 				name: userData.name,
+				email: userData.email,
 				avatar: userData.picture,
+                isAdmin: isAdmin,
 				updatedAt: new Date(),
 			},
 			{ upsert: true, new: true },
-		)) as IUser;
-
-		const { token, expiresAt } = await generateTokenWithExpiry(24 * 7);
-
-		await Session.create({
-			token,
-			userId: (user._id as Types.ObjectId).toString(),
-			slackId: user.slackId,
-			expiresAt,
-		});
-
-		const response = new NextResponse(
-			`<html><head><meta http-equiv="refresh" content="0;url=/dashboard"/></head><body>Redirecting...</body></html>`,
-			{
-				status: 200,
-				headers: {
-					"Content-Type": "text/html",
-				},
-			},
 		);
 
-		const cookieMaxAge = 7 * 24 * 60 * 60;
-		const cookieExpires = new Date(Date.now() + cookieMaxAge * 1000);
+		// Generate JWT
+		const token = sign(
+			{ userId: user._id, slackId: user.slackId },
+			process.env.JWT_SECRET || "default_secret",
+			{ expiresIn: "7d" }
+		);
 
-		response.cookies.set({
-			name: "shovergladeCookie",
-			value: token,
+		const response = NextResponse.redirect(
+			`${process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"}/dashboard`,
+		);
+
+		response.cookies.set("shovergladeCookie", token, {
 			httpOnly: true,
-			secure: true,
+			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
-			maxAge: cookieMaxAge,
-			expires: cookieExpires,
 			path: "/",
+			maxAge: 60 * 60 * 24 * 7,
 		});
 
 		return response;

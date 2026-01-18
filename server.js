@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 require("dotenv").config();
 const { createServer } = require("https");
 const { parse } = require("url");

@@ -6,7 +6,8 @@
     "dev": "bun server.js",
     "build": "next build",
     "start": "NODE_ENV=production bun server.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "bun scripts/seed.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",
