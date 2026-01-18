@@ -1,5 +1,6 @@
 import Footer from "@/components/footer";
 import { cookies } from "next/headers";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
@@ -8,11 +9,17 @@ export default async function Home() {
 	const isLoggedIn = !!token;
 
 	return (
-		<div className="min-w-screen min-h-screen">
+		<div className="min-w-screen min-h-screen bg-[#123b49]">
 			<main className="flex flex-col gap-4 sm:p-4 md:p-16 lg:p-16">
 				<div className="flex flex-col items-center justify-center text-center">
-					<h1 className="text-7xl font-extrabold">Showerglade</h1>
-					<p>
+					{/* <h1 className="text-7xl font-extrabold">Showerglade</h1> */}
+					<Image
+						src={"/showerglade.png"}
+						alt="logo"
+						width={800}
+						height={613}
+					/>
+					<p className="mt-4">
 						Reserve shower spots during Hack Clubs Overglade event!
 					</p>
 				</div>
