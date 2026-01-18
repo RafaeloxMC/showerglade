@@ -4,7 +4,6 @@ import Slot from "@/database/schemas/Slot";
 import { cookies } from "next/headers";
 import { verify, JwtPayload } from "jsonwebtoken";
 
-// Helper to get current user ID
 async function getCurrentUserId() {
 	const cookieStore = await cookies();
 	const token = cookieStore.get("shovergladeCookie")?.value;
@@ -15,7 +14,7 @@ async function getCurrentUserId() {
 			process.env.JWT_SECRET || "default_secret",
 		) as JwtPayload;
 		return decoded?.userId || null;
-	} catch (e) {
+	} catch {
 		return null;
 	}
 }
@@ -40,26 +39,7 @@ export async function POST(request: Request) {
 
 		await connectDB();
 
-		const slot = await Slot.findById(slotId);
-		if (!slot) {
-			return NextResponse.json(
-				{ error: "Slot not found" },
-				{ status: 404 },
-			);
-		}
-
-		// Only the user who booked it can cancel it (or admin - not implemented yet)
-		if (slot.userId?.toString() !== userId) {
-			return NextResponse.json(
-				{ error: "Not authorized to cancel this booking" },
-				{ status: 403 },
-			);
-		}
-
-		slot.isBooked = false;
-		slot.userId = null;
-		await slot.save();
-
+		await Slot.deleteOne(slotId);
 		return NextResponse.json({ success: true });
 	} catch (e) {
 		console.error("Cancel slot error:", e);

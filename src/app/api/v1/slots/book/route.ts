@@ -3,8 +3,8 @@ import { connectDB } from "@/database/db";
 import Slot from "@/database/schemas/Slot";
 import { cookies } from "next/headers";
 import { verify, JwtPayload } from "jsonwebtoken";
+import { Types } from "mongoose";
 
-// Helper to get current user ID
 async function getCurrentUserId() {
 	const cookieStore = await cookies();
 	const token = cookieStore.get("shovergladeCookie")?.value;
@@ -22,7 +22,7 @@ async function getCurrentUserId() {
 
 export async function POST(request: Request) {
 	try {
-		const userId = await getCurrentUserId();
+		const userId = (await getCurrentUserId()) as string | null;
 		if (!userId) {
 			return NextResponse.json(
 				{ error: "Unauthorized" },
@@ -40,9 +40,6 @@ export async function POST(request: Request) {
 
 		await connectDB();
 
-		// Check if user already has a booking that is not cancelled?
-		// Ideally we only allow 1 active booking per user.
-		// Let's implement that restriction.
 		const existingBooking = await Slot.findOne({ userId, isBooked: true });
 		if (existingBooking) {
 			return NextResponse.json(
@@ -67,7 +64,7 @@ export async function POST(request: Request) {
 		}
 
 		slot.isBooked = true;
-		slot.userId = userId;
+		slot.userId = new Types.ObjectId(userId);
 		await slot.save();
 
 		return NextResponse.json({ success: true, slot });
