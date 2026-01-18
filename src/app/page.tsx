@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 
@@ -11,8 +12,8 @@ export default async function Home() {
 			<main className="flex flex-col gap-8 p-8 text-center max-w-2xl">
 				<div>
 					<h1 className="text-7xl font-extrabold mb-4 tracking-tight drop-shadow-md">Shoverglade</h1>
-					<p className="text-xl opacity-90 font-medium"></p>
-						Reserve shower spots during Hack Club's Overglade event!
+					<p className="text-xl opacity-90 font-medium">
+						Reserve shower spots during Hack Club&apos;s Overglade event!
                         Avoid the lines and stay fresh.
 					</p>
 				</div>

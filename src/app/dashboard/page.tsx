@@ -39,7 +39,7 @@ export default function Dashboard() {
 
     // Fetch slots
     const fetchSlots = async (silent = false) => {
-        if(!silent) setLoading(true);
+        if (!silent) setLoading(true);
         try {
             const res = await fetch("/api/v1/slots");
             if (res.ok) {
@@ -50,7 +50,7 @@ export default function Dashboard() {
             console.error("Failed to fetch slots", error);
             toast.error("Failed to load shower slots.");
         } finally {
-            if(!silent) setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -59,7 +59,7 @@ export default function Dashboard() {
         fetch("/api/v1/auth/me")
             .then((res) => res.json())
             .then((data) => {
-                if(data.user) {
+                if (data.user) {
                     setUser(data.user);
                 } else {
                     handleLogout();
@@ -71,19 +71,19 @@ export default function Dashboard() {
     }, []);
 
     const handleLogout = async () => {
-         await fetch("/api/v1/auth/logout", { method: "POST" });
-         window.location.href = "/";
+        await fetch("/api/v1/auth/logout", { method: "POST" });
+        window.location.href = "/";
     };
 
     const handleConfirmBooking = async () => {
         if (!selectedSlot) return;
-        
+
         setIsSubmitting(true);
         try {
             const res = await fetch("/api/v1/slots/book", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ slotId: selectedSlot._id })
+                body: JSON.stringify({ slotId: selectedSlot._id }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -91,7 +91,7 @@ export default function Dashboard() {
             } else {
                 toast.success("Shower booked successfully!");
                 setSelectedSlot(null);
-                fetchSlots(true); 
+                fetchSlots(true);
             }
         } catch (e) {
             toast.error("Network error while booking");
@@ -101,14 +101,14 @@ export default function Dashboard() {
     };
 
     const handleCancel = async (slotId: string) => {
-         if (!confirm("Are you sure you want to cancel this booking?")) return;
-         
-         setIsSubmitting(true);
-         try {
+        if (!confirm("Are you sure you want to cancel this booking?")) return;
+
+        setIsSubmitting(true);
+        try {
             const res = await fetch("/api/v1/slots/cancel", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ slotId })
+                body: JSON.stringify({ slotId }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -124,16 +124,17 @@ export default function Dashboard() {
         }
     };
 
-    const myBooking = slots.find(s => s.userId === user?._id);
+    const myBooking = slots.find((s) => s.userId === user?._id);
 
-    if (loading && !slots.length) return (
-        <div className="flex h-screen w-full items-center justify-center bg-zinc-950 text-white">
-            <div className="animate-pulse flex flex-col items-center gap-4">
-                <div className="h-8 w-8 rounded-full border-2 border-t-blue-500 border-zinc-800 animate-spin" />
-                <p className="text-zinc-500 text-sm">Loading schedule...</p>
+    if (loading && !slots.length)
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-zinc-950 text-white">
+                <div className="animate-pulse flex flex-col items-center gap-4">
+                    <div className="h-8 w-8 rounded-full border-2 border-t-blue-500 border-zinc-800 animate-spin" />
+                    <p className="text-zinc-500 text-sm">Loading schedule...</p>
+                </div>
             </div>
-        </div>
-    );
+        );
 
     return (
         <div className="min-h-screen bg-zinc-50 text-zinc-900 font-sans selection:bg-blue-100">
@@ -141,171 +142,155 @@ export default function Dashboard() {
             <header className="flex justify-between items-center p-6 md:p-8 max-w-5xl mx-auto w-full">
                 <div className="flex items-center gap-3">
                     <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">S</div>
-                    <h1 className="text-xl font-bold tracking-tight text-zinc-900">
-                        Shoverglade
-                    </h1>
+                    <h1 className="text-xl font-bold tracking-tight text-zinc-900">Shoverglade</h1>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                     <div className="hidden md:flex flex-col items-end">
                         <span className="text-sm font-medium">{user?.name}</span>
-                        <span className="text-xs text-zinc-500">Hack Clubber</span>
+                        <span className="text-xs text-zinc-500">Attendee</span>
                     </div>
-                    {user?.avatar && (
-                        <img src={user.avatar} alt={user.name} className="h-10 w-10 rounded-full border border-zinc-200" />
-                    )}
-                     <button 
+                    {user?.avatar && <img src={user.avatar} alt="User" className="w-9 h-9 rounded-full border border-zinc-200" />}
+                    <button
                         onClick={handleLogout}
-                        className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors ml-2"
+                        className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors ml-2"
                     >
                         Sign Out
                     </button>
                 </div>
             </header>
 
-            <main className="p-6 md:p-8 max-w-5xl mx-auto space-y-8 pb-20">
-                
-                {/* Status Card */}
-                {myBooking ? (
-                     <div className="bg-white rounded-2xl p-8 border border-zinc-200 shadow-sm relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-green-500" />
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <main className="max-w-3xl mx-auto px-6 pb-20">
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl font-bold text-zinc-900 mb-2">Book a Shower</h2>
+                    <p className="text-zinc-500">Select a time slot below to reserve your 20-minute session.</p>
+                </div>
+
+                {/* My Booking Card */}
+                {myBooking && (
+                    <div className="mb-10 bg-white rounded-2xl p-6 shadow-sm border border-blue-100 relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+                        <div className="flex items-center justify-between">
                             <div>
-                                <h2 className="text-2xl font-bold text-zinc-900 mb-2">You have a spot reserved!</h2>
-                                <p className="text-zinc-600">
-                                    Your shower is scheduled for <span className="font-semibold text-zinc-900">{format(new Date(myBooking.startTime), "EEEE h:mm a")}</span>.
+                                <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Your Reservation</p>
+                                <h3 className="text-2xl font-bold text-zinc-900">
+                                    {format(new Date(myBooking.startTime), "h:mm aa")}
+                                    <span className="text-zinc-400 font-normal mx-2">-</span>
+                                    {format(new Date(myBooking.endTime), "h:mm aa")}
+                                </h3>
+                                <p className="text-zinc-500 text-sm mt-1">
+                                    {format(new Date(myBooking.startTime), "EEEE, MMMM do")}
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => handleCancel(myBooking._id)}
                                 disabled={isSubmitting}
-                                className="px-5 py-2.5 rounded-lg border border-red-200 text-red-600 font-medium hover:bg-red-50 hover:border-red-300 transition-all text-sm"
+                                className="px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
                             >
-                                {isSubmitting ? "Cancelling..." : "Cancel Reservation"}
+                                {isSubmitting ? "Cancelling..." : "Cancel Booking"}
                             </button>
                         </div>
-                    </div>
-                ) : (
-                    <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-12 text-white shadow-lg relative overflow-hidden">
-                        <div className="relative z-10 max-w-xl">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4">Time to freshen up?</h2>
-                            <p className="text-blue-100 text-lg mb-8 leading-relaxed">
-                                Choose an available slot below to lock in your shower time. 
-                                Slots are 15 minutes each to keep the line moving!
-                            </p>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm border border-white/20 text-sm font-medium">
-                                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                                {slots.filter(s => !s.isBooked).length} slots available today
-                            </div>
-                        </div>
-                        
-                        {/* Decorative Background */}
-                        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-                        <div className="absolute top-12 right-12 w-32 h-32 bg-blue-400/20 rounded-full blur-2xl" />
                     </div>
                 )}
 
-                {/* Slots Grid */}
-                <div className="space-y-6">
-                    <h3 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-                        Available Slots
-                    </h3>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {slots.map((slot) => {
-                            const startTime = new Date(slot.startTime);
-                            const isMyBooking = slot.userId === user?._id;
-                            
-                            return (
-                                <button
-                                    key={slot._id}
-                                    disabled={slot.isBooked}
-                                    onClick={() => setSelectedSlot(slot)}
-                                    className={cn(
-                                        "group relative flex flex-col items-start p-5 rounded-xl border transition-all duration-200",
-                                        slot.isBooked 
-                                            ? isMyBooking
-                                                ? "bg-green-50 border-green-200 cursor-default" 
-                                                : "bg-zinc-50 border-zinc-100 opacity-60 cursor-not-allowed"
-                                            : "bg-white border-zinc-200 hover:border-blue-400 hover:shadow-md cursor-pointer hover:-translate-y-1"
-                                    )}
-                                >
-                                    <div className="text-lg font-bold text-zinc-900 mb-1">
-                                        {format(startTime, "h:mm a")}
-                                    </div>
-                                    <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 mb-4">
-                                        {format(startTime, "EEE, MMM d")}
-                                    </div>
+                {!myBooking && (
+                    <>
+                        <div className="bg-white rounded-3xl shadow-sm border border-zinc-200 p-8">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="font-semibold text-lg text-zinc-900">Available Slots</h3>
+                                <div className="text-sm text-zinc-500">Today</div>
+                            </div>
 
-                                    <div className="mt-auto w-full pt-4 border-t border-zinc-100 flex items-center justify-between">
-                                        {slot.isBooked ? (
-                                            isMyBooking ? (
-                                                <span className="text-green-600 font-bold text-sm flex items-center gap-1.5">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-green-600" />
-                                                    Reserved
-                                                </span>
-                                            ) : (
-                                                <div className="flex items-center gap-2">
-                                                    {slot.bookedBy?.avatar ? (
-                                                        <img src={slot.bookedBy.avatar} alt="User" className="w-6 h-6 rounded-full grayscale opacity-70" />
-                                                    ) : (
-                                                        <div className="w-6 h-6 rounded-full bg-zinc-200" />
-                                                    )}
-                                                    <span className="text-zinc-400 text-sm font-medium">Taken</span>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                                {slots.map((slot) => {
+                                    const startTime = new Date(slot.startTime);
+                                    const isBooked = slot.isBooked;
+                                    const isSelected = selectedSlot?._id === slot._id;
+                                    const isPast = new Date() > new Date(slot.endTime);
+
+                                    return (
+                                        <div key={slot._id} className="relative group">
+                                            <button
+                                                disabled={isBooked || isPast}
+                                                onClick={() => setSelectedSlot(slot)}
+                                                className={cn(
+                                                    "w-full relative py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border flex flex-col items-center justify-center gap-1 h-16",
+                                                    isSelected
+                                                        ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105 z-10"
+                                                        : isBooked
+                                                        ? "bg-zinc-50 text-zinc-400 border-zinc-100 cursor-not-allowed"
+                                                        : isPast
+                                                        ? "bg-zinc-50 text-zinc-300 border-transparent cursor-not-allowed opacity-50"
+                                                        : "bg-white text-zinc-700 border-zinc-200 hover:border-blue-300 hover:bg-blue-50/50"
+                                                )}
+                                            >
+                                                <span>{format(startTime, "h:mm a")}</span>
+                                                {isBooked && slot.bookedBy && (
+                                                    <div className="flex items-center gap-1.5 max-w-full overflow-hidden px-1">
+                                                        {slot.bookedBy.avatar && (
+                                                            <img
+                                                                src={slot.bookedBy.avatar}
+                                                                alt={slot.bookedBy.name}
+                                                                className="w-4 h-4 rounded-full grayscale opacity-70"
+                                                            />
+                                                        )}
+                                                        <span className="text-[10px] truncate max-w-[60px] leading-tight">
+                                                            {slot.bookedBy.name.split(" ")[0]}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </button>
+
+                                            {/* Hover Tooltip for booked slots */}
+                                            {isBooked && slot.bookedBy && (
+                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+                                                    Booked by {slot.bookedBy.name}
                                                 </div>
-                                            )
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {slots.length === 0 && (
+                                <div className="text-center py-10 text-zinc-400">No slots available for today.</div>
+                            )}
+                        </div>
+
+                        {/* Booking Summary & Action */}
+                        <div
+                            className={cn(
+                                "fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-zinc-200 transition-transform duration-300 ease-in-out md:relative md:bg-transparent md:backdrop-blur-none md:border-t-0 md:transform-none md:p-0 md:mt-8",
+                                selectedSlot ? "translate-y-0" : "translate-y-full md:translate-y-0 md:opacity-50 md:pointer-events-none"
+                            )}
+                        >
+                            <div className="max-w-3xl mx-auto md:bg-white md:rounded-2xl md:border md:border-zinc-200 md:p-6 md:shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div className="hidden md:block">
+                                    <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Selected Time</p>
+                                    <div className="text-xl font-bold text-zinc-900">
+                                        {selectedSlot ? (
+                                            <>
+                                                {format(new Date(selectedSlot.startTime), "h:mm a")} -{" "}
+                                                {format(new Date(selectedSlot.endTime), "h:mm a")}
+                                            </>
                                         ) : (
-                                            <span className="text-blue-600 font-bold text-sm flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                Book Now
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                </svg>
-                                            </span>
+                                            <span className="text-zinc-300">--:--</span>
                                         )}
                                     </div>
+                                </div>
+
+                                <button
+                                    onClick={handleConfirmBooking}
+                                    disabled={!selectedSlot || isSubmitting}
+                                    className="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-blue-600/20 active:scale-95 transition-all disabled:opacity-50 disabled:shadow-none"
+                                >
+                                    {isSubmitting ? "Confirming..." : "Confirm Booking"}
                                 </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            </main>
-
-            {/* Booking Modal */}
-            {selectedSlot && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 md:p-8 animate-in zoom-in-95 duration-200">
-                        <div className="text-center mb-6">
-                            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-zinc-900 mb-2">Confirm Reservation</h3>
-                            <p className="text-zinc-600">
-                                You are about to book the shower for <br/>
-                                <strong className="text-zinc-900">{format(new Date(selectedSlot.startTime), "EEEE, h:mm a")}</strong>
-                            </p>
                         </div>
-
-                        <div className="flex flex-col gap-3">
-                            <button
-                                onClick={handleConfirmBooking}
-                                disabled={isSubmitting}
-                                className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? "Confirming..." : "Yes, Book It"}
-                            </button>
-                            <button
-                                onClick={() => setSelectedSlot(null)}
-                                disabled={isSubmitting}
-                                className="w-full py-3 bg-white border border-zinc-200 text-zinc-700 font-bold rounded-xl hover:bg-zinc-50 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                    </>
+                )}
+            </main>
         </div>
     );
 }
