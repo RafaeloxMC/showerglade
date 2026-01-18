@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import User, { IUser } from "./database/schemas/User";
 import { connectDB } from "./database/db";
 import Session from "./database/schemas/Session";
@@ -67,4 +67,7 @@ export async function requireAuth(
 	return { user };
 }
 
-export function middleware(next: NextRequest) {}
+export function middleware(request: NextRequest) {
+	const res = NextResponse.next();
+	return res;
+}
