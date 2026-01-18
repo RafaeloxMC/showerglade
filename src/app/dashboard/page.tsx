@@ -1,51 +1,38 @@
-"use client";
-
 import { connectDB } from "@/database/db";
 import Session from "@/database/schemas/Session";
 import User, { IUser } from "@/database/schemas/User";
 import { cookies } from "next/headers";
-import { useEffect, useState } from "react";
 
-function DashboardPage() {
-	const [user, setUser] = useState<IUser | null>(null);
+async function getAuthenticatedUser(): Promise<IUser | null> {
+	try {
+		const cookieStore = await cookies();
+		const token = cookieStore.get("shovergladeCookie")?.value;
 
-	const getAuthenticatedUser = async () => {
-		try {
-			const cookieStore = await cookies();
-			const token = cookieStore.get("shovergladeCookie")?.value;
-
-			if (!token) {
-				return null;
-			}
-
-			await connectDB();
-
-			const session = await Session.findOne({
-				token,
-				expiresAt: { $gt: new Date() },
-			});
-
-			if (!session) {
-				return null;
-			}
-
-			const user = await User.findById(session.userId);
-			return user as IUser;
-		} catch (error) {
-			console.error("Authentication error:", error);
+		if (!token) {
 			return null;
 		}
-	};
 
-	const fetchUser = async () => {
-		setUser(await getAuthenticatedUser());
-	};
+		await connectDB();
 
-	useEffect(() => {
-		(async () => {
-			await fetchUser();
-		})();
-	}, []);
+		const session = await Session.findOne({
+			token,
+			expiresAt: { $gt: new Date() },
+		});
+
+		if (!session) {
+			return null;
+		}
+
+		const user = await User.findById(session.userId);
+		return user as IUser;
+	} catch (error) {
+		console.error("Authentication error:", error);
+		return null;
+	}
+}
+
+async function DashboardPage() {
+	const user = await getAuthenticatedUser();
 
 	return (
 		<div className="min-w-screen min-h-screen bg-black">
