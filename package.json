@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "lucide-react": "^0.562.0",
     "mongoose": "^9.1.4",
     "next": "16.1.3",
