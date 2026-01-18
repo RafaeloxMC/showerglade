@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/database/db";
 import Slot from "@/database/schemas/Slot";
+import User, { IUser } from "@/database/schemas/User";
 
 export async function GET() {
 	try {
@@ -8,19 +9,26 @@ export async function GET() {
 
 		const slots = await Slot.find({}).sort({ startTime: 1 });
 
-		const formattedSlots = slots.map((slot) => ({
-			_id: slot._id,
-			startTime: slot.startTime,
-			endTime: slot.endTime,
-			isBooked: slot.isBooked,
-			userId: slot.userId || null,
-			bookedBy: slot.userId
-				? {
-						name: slot.userId.name,
-						avatar: slot.userId.avatar,
-					}
-				: undefined,
-		}));
+		const formattedSlots = await Promise.all(
+			slots.map(async (slot) => {
+				const currentUser = (await User.findById(
+					slot.userId,
+				).lean()) as IUser | null;
+				return {
+					_id: slot._id,
+					startTime: slot.startTime,
+					endTime: slot.endTime,
+					isBooked: slot.isBooked,
+					userId: slot.userId || null,
+					bookedBy: slot.userId
+						? {
+								name: currentUser?.name || "",
+								avatar: currentUser?.avatar || "",
+							}
+						: undefined,
+				};
+			}),
+		);
 
 		return NextResponse.json({ slots: formattedSlots });
 	} catch (e) {

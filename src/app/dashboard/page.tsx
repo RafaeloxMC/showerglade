@@ -8,7 +8,6 @@ import { twMerge } from "tailwind-merge";
 import { IUser } from "@/database/schemas/User";
 import { useRouter } from "next/navigation";
 import Header from "@/components/dashboard/header";
-import User from "@/database/schemas/User";
 
 function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -70,6 +69,7 @@ export default function Dashboard() {
 			.catch(() => {
 				handleLogout();
 			});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleConfirmBooking = async () => {
@@ -204,76 +204,86 @@ export default function Dashboard() {
 							</div>
 
 							<div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-								{slots.map((slot) => {
-									const startTime = new Date(slot.startTime);
-									const isBooked = slot.isBooked;
-									const isSelected =
-										selectedSlot?._id === slot._id;
-									const isPast =
-										new Date() > new Date(slot.endTime);
-
-									if (isPast) return <></>;
-
-									return (
-										<div
-											key={slot._id}
-											className="relative group"
-										>
-											<button
-												disabled={isBooked || isPast}
-												onClick={() =>
-													setSelectedSlot(slot)
-												}
-												className={cn(
-													"w-full relative py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border flex flex-col items-center justify-center gap-1 h-16",
-													isSelected
-														? "bg-teal-600 text-white border-teal-600 shadow-md scale-105 z-10"
-														: isBooked
-															? "bg-neutral-800 text-neutral-400 border-neutral-700 cursor-not-allowed"
-															: "bg-black border-neutral-950 hover:border-neutral-700 hover:bg-neutral-950",
-												)}
+								{slots
+									.filter(
+										(slot) =>
+											!(
+												new Date() >
+												new Date(slot.endTime)
+											),
+									)
+									.map((slot) => {
+										const startTime = new Date(
+											slot.startTime,
+										);
+										const isBooked = slot.isBooked;
+										const isSelected =
+											selectedSlot?._id === slot._id;
+										return (
+											<div
+												key={slot._id}
+												className="relative group"
 											>
-												<span>
-													{format(
-														startTime,
-														"h:mm a",
+												<button
+													disabled={isBooked}
+													onClick={() =>
+														setSelectedSlot(slot)
+													}
+													className={cn(
+														"w-full relative py-3 px-2 rounded-xl text-sm font-medium transition-all duration-200 border flex flex-col items-center justify-center gap-1 h-16",
+														isSelected
+															? "bg-teal-600 text-white border-teal-600 shadow-md scale-105 z-10"
+															: isBooked
+																? "bg-neutral-800 text-neutral-400 border-neutral-700 cursor-not-allowed"
+																: "bg-black border-neutral-950 hover:border-neutral-700 hover:bg-neutral-950",
 													)}
-												</span>
-												{isBooked && slot.bookedBy && (
-													<div className="flex items-center gap-1.5 max-w-full overflow-hidden px-1">
-														{slot.bookedBy
-															.avatar && (
-															/* eslint-disable-next-line @next/next/no-img-element */
-															<img
-																src={
-																	slot
-																		.bookedBy
-																		.avatar
-																}
-																alt={
-																	slot
-																		.bookedBy
-																		.name
-																}
-																className="w-4 h-4 rounded-full grayscale opacity-70"
-															/>
+												>
+													<span>
+														{format(
+															startTime,
+															"h:mm a",
 														)}
-														<span className="text-[10px] truncate max-w-[60px] leading-tight">
-															{slot.bookedBy.name}
-														</span>
+													</span>
+													{isBooked &&
+														slot.bookedBy && (
+															<div className="flex items-center gap-1.5 max-w-full overflow-hidden px-1">
+																{slot.bookedBy
+																	.avatar && (
+																	/* eslint-disable-next-line @next/next/no-img-element */
+																	<img
+																		src={
+																			slot
+																				.bookedBy
+																				.avatar
+																		}
+																		alt={
+																			slot
+																				.bookedBy
+																				.name
+																		}
+																		className="w-4 h-4 rounded-full grayscale opacity-70"
+																	/>
+																)}
+																<span className="text-[10px] truncate max-w-15 leading-tight">
+																	{
+																		slot
+																			.bookedBy
+																			.name
+																	}
+																</span>
+															</div>
+														)}
+												</button>
+
+												{isBooked && slot.bookedBy && (
+													<div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+														Booked by{" "}
+														{slot.bookedBy.name}
 													</div>
 												)}
-											</button>
-
-											{isBooked && slot.bookedBy && (
-												<div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-													Booked by{" "}
-													{slot.bookedBy.name}
-												</div>
-											)}
-										</div>
-									);
-								})}
+											</div>
+										);
+									})}
 							</div>
 
 							{slots.length === 0 && (
