@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
@@ -58,6 +59,7 @@ export default async function Home() {
 					)}
 				</div>
 			</main>
+			<Footer />
 		</div>
 	);
 }
