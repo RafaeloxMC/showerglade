@@ -144,7 +144,9 @@ export default function Dashboard() {
 
 			<main className="max-w-3xl mx-auto px-6 pb-20">
 				<div className="text-center mb-10">
-					<h2 className="text-3xl font-bol mb-2">Book a Shower</h2>
+					<h2 className="text-3xl font-extrabold mb-2">
+						Book a Shower
+					</h2>
 					<p className="text-neutral-300">
 						Select a time slot below to reserve your 20-minute
 						session.
