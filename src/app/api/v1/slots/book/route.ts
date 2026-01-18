@@ -15,7 +15,7 @@ async function getCurrentUserId() {
 			process.env.JWT_SECRET || "default_secret",
 		) as JwtPayload;
 		return decoded?.userId || null;
-	} catch (e) {
+	} catch {
 		return null;
 	}
 }
