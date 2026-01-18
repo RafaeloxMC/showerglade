@@ -3,33 +3,29 @@ import Session from "@/database/schemas/Session";
 import User, { IUser } from "@/database/schemas/User";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 async function getAuthenticatedUser(): Promise<IUser | null> {
-	try {
-		const cookieStore = await cookies();
-		const token = cookieStore.get("shovergladeCookie")?.value;
+	const cookieStore = await cookies();
+	const token = cookieStore.get("shovergladeCookie")?.value;
 
-		if (!token) {
-			return null;
-		}
-
-		await connectDB();
-
-		const session = await Session.findOne({
-			token,
-			expiresAt: { $gt: new Date() },
-		});
-
-		if (!session) {
-			return null;
-		}
-
-		const user = await User.findById(session.userId);
-		return user as IUser;
-	} catch (error) {
-		console.error("Authentication error:", error);
-		return null;
+	if (!token) {
+		redirect("/");
 	}
+
+	await connectDB();
+
+	const session = await Session.findOne({
+		token,
+		expiresAt: { $gt: new Date() },
+	});
+
+	if (!session) {
+		redirect("/");
+	}
+
+	const user = await User.findById(session.userId);
+	return user as IUser;
 }
 
 async function DashboardPage() {
