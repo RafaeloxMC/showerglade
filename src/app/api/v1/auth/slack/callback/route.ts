@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded",
 					Authorization: `Basic ${Buffer.from(
-						`${process.env.SLACK_CLIENT_ID}:${process.env.SLACK_SECRET}`,
+						`${process.env.SLACK_CLIENT_ID}:${process.env.SLACK_CLIENT_SECRET}`,
 					).toString("base64")}`,
 				},
 				body: new URLSearchParams({
