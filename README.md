@@ -1,4 +1,4 @@
-# Shoverglade
+# Showerglade
 
 A webapp made to help manage the usage of showers during Hack Clubs Overglade event in Singapore (2026).
 

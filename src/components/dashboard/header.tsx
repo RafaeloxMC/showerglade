@@ -21,7 +21,7 @@ function Header(props: HeaderProps) {
 					🚿
 				</div>
 				<h1 className="text-xl font-bold tracking-tight">
-					Shoverglade
+					Showerglade
 				</h1>
 			</div>
 

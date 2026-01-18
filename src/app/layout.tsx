@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Shoverglade",
+	title: "Showerglade",
 	description: "Reserve Showers for Hack Clubs Overglade Event!",
 };
 
