@@ -14,6 +14,14 @@ Install the dependencies:
 bun install
 ```
 
+Setup HTTPS certificates:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -nodes -days 365 \
+  -keyout localhost-key.pem -out localhost.pem \
+  -subj "/CN=localhost"
+```
+
 Run the development server:
 
 ```bash
