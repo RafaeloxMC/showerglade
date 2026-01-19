@@ -29,7 +29,7 @@ export async function GET() {
 						isBooked: slot.isBooked,
 						userId: slot.userId || null,
 						bookedBy: slot.userId
-							? slot.anonymized
+							? (slot.anonymized ?? true)
 								? {
 										name: "Anonymous",
 										avatar: "/showerglade.png",

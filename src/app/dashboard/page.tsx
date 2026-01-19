@@ -29,7 +29,7 @@ export default function Dashboard() {
 	const fetchSlots = async (silent = false) => {
 		if (!silent) setLoading(true);
 		try {
-			const res = await fetch("/api/v1/slots");
+			const res = await fetch("/api/v1/slots", { cache: "no-store" });
 			if (res.ok) {
 				const data = await res.json();
 				const resSlots = data.slots as ISlot[];
