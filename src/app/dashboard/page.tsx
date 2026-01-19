@@ -166,19 +166,18 @@ export default function Dashboard() {
 				</div>
 
 				{myBooking && (
-					<div className="mb-10 bg-white rounded-2xl p-6 shadow-sm border border-teal-100 relative overflow-hidden group">
-						<div className="absolute top-0 left-0 w-1 h-full bg-teal-500" />
+					<div className="mb-10 bg-teal-800 rounded-2xl p-6 shadow-sm border border-teal-700 relative overflow-hidden group">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-1">
+								<p className="text-xs font-bold text-teal-400 uppercase tracking-wider mb-1">
 									Your Reservation
 								</p>
-								<h3 className="text-2xl font-bold text-neutral-900">
+								<h3 className="text-2xl font-bold text-white">
 									{format(
 										new Date(myBooking.startTime),
 										"h:mm aa",
 									)}
-									<span className="text-neutral-300 font-normal mx-2">
+									<span className="text-neutral-200 font-normal mx-2">
 										-
 									</span>
 									{format(
@@ -186,7 +185,7 @@ export default function Dashboard() {
 										"h:mm aa",
 									)}
 								</h3>
-								<p className="text-neutral-500 text-sm mt-1">
+								<p className="text-neutral-200 text-sm mt-1">
 									{format(
 										new Date(myBooking.startTime),
 										"EEEE, MMMM do",
@@ -196,7 +195,7 @@ export default function Dashboard() {
 							<button
 								onClick={() => handleCancel(myBooking._id)}
 								disabled={isSubmitting}
-								className="px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+								className="px-4 py-2 hover:bg-red-600 bg-red-500 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
 							>
 								{isSubmitting
 									? "Cancelling..."

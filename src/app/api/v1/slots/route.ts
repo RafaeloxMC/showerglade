@@ -3,6 +3,7 @@ import { connectDB } from "@/database/db";
 import Slot from "@/database/schemas/Slot";
 import User, { IUser } from "@/database/schemas/User";
 import { slotDuration } from "@/lib/config";
+import { Types } from "mongoose";
 
 export async function GET() {
 	try {
@@ -58,11 +59,11 @@ export async function GET() {
 					next_slot.getTime() + slotDuration * 60 * 1000,
 				);
 				allSlots.push({
-					_id: null,
+					_id: new Types.ObjectId(),
 					startTime: startSlot,
 					endTime: endSlot,
 					isBooked: false,
-					userId: null,
+					userId: new Types.ObjectId(),
 					bookedBy: undefined,
 				});
 			}
