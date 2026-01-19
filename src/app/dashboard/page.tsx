@@ -41,7 +41,12 @@ export default function Dashboard() {
 			const res = await fetch("/api/v1/slots");
 			if (res.ok) {
 				const data = await res.json();
-				setSlots(data.slots);
+				const resSlots = data.slots as Slot[];
+				setSlots(
+					resSlots.filter(
+						(a) => a.isBooked && new Date(a.startTime) > new Date(),
+					),
+				);
 			}
 		} catch (error) {
 			console.error("Failed to fetch slots", error);
