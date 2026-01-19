@@ -341,7 +341,6 @@ export default function Dashboard() {
 					</>
 				)}
 			</main>
-			<Footer />
 		</div>
 	);
 }
