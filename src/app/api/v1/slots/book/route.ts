@@ -1,30 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/database/db";
 import Slot from "@/database/schemas/Slot";
-import { cookies } from "next/headers";
-import { verify, JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 import { slotDuration } from "@/lib/config";
-import User from "@/database/schemas/User";
+import { requireAuth } from "@/lib/auth";
 
-async function getCurrentUserId() {
-	const cookieStore = await cookies();
-	const token = cookieStore.get("showergladeCookie")?.value;
-	if (!token) return null;
+export async function POST(request: NextRequest) {
 	try {
-		const decoded = verify(
-			token,
-			process.env.JWT_SECRET || "default_secret",
-		) as JwtPayload;
-		return decoded?.userId || null;
-	} catch {
-		return null;
-	}
-}
+		const authResult = await requireAuth(request);
 
-export async function POST(request: Request) {
-	try {
-		const userId = (await getCurrentUserId()) as string | null;
+		if ("error" in authResult) {
+			return authResult.error;
+		}
+
+		const { user } = authResult;
+
+		const userId = user._id.toString() as string | null;
 		if (!userId) {
 			return NextResponse.json(
 				{ error: "Unauthorized" },
@@ -33,13 +24,6 @@ export async function POST(request: Request) {
 		}
 
 		await connectDB();
-
-		const user = await User.findById(userId);
-		if (!user)
-			return NextResponse.json(
-				{ error: "Unauthorized" },
-				{ status: 401 },
-			);
 
 		const body = await request.json();
 

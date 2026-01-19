@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/database/db";
-import Session from "@/database/schemas/Session";
 import User, { IUser } from "@/database/schemas/User";
+import { verify, JwtPayload } from "jsonwebtoken";
 
 export async function authenticateUser(
 	request: NextRequest,
@@ -20,18 +20,18 @@ export async function authenticateUser(
 			return null;
 		}
 
-		await connectDB();
-
-		const session = await Session.findOne({
+		const decoded = verify(
 			token,
-			expiresAt: { $gt: new Date() },
-		});
+			process.env.JWT_SECRET || "default_secret",
+		) as JwtPayload;
 
-		if (!session) {
+		if (!decoded || !decoded.userId) {
 			return null;
 		}
 
-		const user = await User.findById(session.userId);
+		await connectDB();
+
+		const user = await User.findById(decoded.userId);
 
 		return user;
 	} catch (error) {
@@ -42,16 +42,15 @@ export async function authenticateUser(
 
 export async function requireAuth(
 	request: NextRequest,
-): Promise<{ user: IUser } | { error: Response }> {
+): Promise<{ user: IUser } | { error: NextResponse }> {
 	const user = await authenticateUser(request);
 
 	if (!user) {
 		return {
-			error: new Response(
-				JSON.stringify({ message: "Authentication required" }),
+			error: NextResponse.json(
+				{ message: "Authentication required" },
 				{
 					status: 401,
-					headers: { "Content-Type": "application/json" },
 				},
 			),
 		};

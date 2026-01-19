@@ -89,6 +89,7 @@ export default function Dashboard() {
 					slotStart: selectedSlot.startTime,
 					anonymized: isAnonymized,
 				}),
+				credentials: "include",
 			});
 			const data = await res.json();
 			if (!res.ok) {

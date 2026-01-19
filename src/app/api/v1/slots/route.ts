@@ -1,12 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/database/db";
 import Slot, { ISlot } from "@/database/schemas/Slot";
-import User, { IUser } from "@/database/schemas/User";
 import { slotDuration } from "@/lib/config";
 import { Types } from "mongoose";
+import { requireAuth } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
 	try {
+		const authResult = await requireAuth(req);
+
+		if ("error" in authResult) {
+			return authResult.error;
+		}
+
+		const { user } = authResult;
+
 		await connectDB();
 
 		const slots = await Slot.find({}).sort({ startTime: 1 });
@@ -19,15 +27,16 @@ export async function GET() {
 						new Date(a.endTime).getTime() > new Date().getTime(),
 				)
 				.map(async (slot) => {
-					const currentUser = (await User.findById(
-						slot.userId,
-					).lean()) as IUser | null;
+					const currentUser = user;
 					return {
 						_id: slot._id,
 						startTime: slot.startTime,
 						endTime: slot.endTime,
 						isBooked: slot.isBooked,
-						userId: slot.userId || null,
+						userId:
+							slot.userId.toString() == user._id.toString()
+								? user._id
+								: null,
 						bookedBy: slot.userId
 							? (slot.anonymized ?? true)
 								? {
