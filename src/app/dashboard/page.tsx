@@ -42,9 +42,17 @@ export default function Dashboard() {
 				const data = await res.json();
 				const resSlots = data.slots as Slot[];
 				setSlots(
-					resSlots.filter(
-						(a) => a.isBooked && new Date(a.startTime) > new Date(),
-					),
+					resSlots
+						.filter(
+							(a) =>
+								new Date(a.startTime).getTime() >
+								new Date().getTime(),
+						)
+						.sort(
+							(a, b) =>
+								new Date(a.startTime).getTime() -
+								new Date(b.startTime).getTime(),
+						),
 				);
 			}
 		} catch (error) {
@@ -241,8 +249,8 @@ export default function Dashboard() {
 														isSelected
 															? "bg-teal-600 text-white border-teal-600 shadow-md scale-105 z-10"
 															: isBooked
-																? "bg-neutral-800 text-neutral-300 border-neutral-700 cursor-not-allowed"
-																: "bg-black border-neutral-950 hover:border-neutral-700 hover:bg-neutral-950",
+																? "bg-teal-800/50 text-neutral-300 border-teal-700/50 cursor-not-allowed"
+																: "bg-teal-800 border-teal-700 hover:border-teal-800 hover:bg-teal-900 hover:scale-105 duration-200",
 													)}
 												>
 													<span>
