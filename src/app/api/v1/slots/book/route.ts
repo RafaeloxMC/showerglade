@@ -58,7 +58,12 @@ export async function POST(request: Request) {
 			anonymized = true;
 		}
 
-		const existingBooking = await Slot.findOne({ userId, isBooked: true });
+		const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+		const existingBooking = await Slot.findOne({
+			userId: new Types.ObjectId(userId),
+			isBooked: true,
+			startTime: { $gte: twentyFourHoursAgo },
+		});
 		if (existingBooking) {
 			return NextResponse.json(
 				{ error: "You already have an active booking." },

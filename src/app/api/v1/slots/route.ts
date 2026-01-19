@@ -27,12 +27,17 @@ export async function GET() {
 						startTime: slot.startTime,
 						endTime: slot.endTime,
 						isBooked: slot.isBooked,
-						userId: slot.anonymized ? slot.userId || null : null,
+						userId: slot.userId || null,
 						bookedBy: slot.userId
-							? {
-									name: currentUser?.name || "",
-									avatar: currentUser?.avatar || "",
-								}
+							? slot.anonymized
+								? {
+										name: "Anonymous",
+										avatar: "/showerglade.png",
+									}
+								: {
+										name: currentUser?.name || "",
+										avatar: currentUser?.avatar || "",
+									}
 							: undefined,
 						anonymized: slot.anonymized ?? true,
 					} as ISlot;

@@ -24,6 +24,7 @@ export default function Dashboard() {
 	const [user, setUser] = useState<IUser | null>(null);
 	const [selectedSlot, setSelectedSlot] = useState<ISlot | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isAnonymized, setAnonymized] = useState<boolean>(false);
 
 	const fetchSlots = async (silent = false) => {
 		if (!silent) setLoading(true);
@@ -84,7 +85,10 @@ export default function Dashboard() {
 			const res = await fetch("/api/v1/slots/book", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ slotStart: selectedSlot.startTime }),
+				body: JSON.stringify({
+					slotStart: selectedSlot.startTime,
+					anonymized: isAnonymized,
+				}),
 			});
 			const data = await res.json();
 			if (!res.ok) {
@@ -346,7 +350,12 @@ export default function Dashboard() {
 									<div className="flex flex-row gap-2">
 										<input
 											type="checkbox"
-											placeholder="Anonymize Booking"
+											checked={isAnonymized}
+											onChange={(e) =>
+												setAnonymized(
+													e.currentTarget.checked,
+												)
+											}
 										/>
 										<label>Anonymize Booking</label>
 									</div>
