@@ -2,8 +2,8 @@ import Image from "next/image";
 
 function Footer() {
 	return (
-		<div className="absolute w-screen bottom-0">
-			<div className="absolute -bottom-12 w-full">
+		<div className="relative w-screen bottom-0 bg-[#123b49] ">
+			<div className="-bottom-12 w-full">
 				<Image
 					alt="footer background"
 					src="/footer.png"
