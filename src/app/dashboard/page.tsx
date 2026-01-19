@@ -233,10 +233,11 @@ export default function Dashboard() {
 										);
 										const isBooked = slot.isBooked;
 										const isSelected =
-											selectedSlot?._id === slot._id;
+											selectedSlot?.startTime ===
+											slot.startTime;
 										return (
 											<div
-												key={slot._id}
+												key={slot.startTime}
 												className="relative group"
 											>
 												<button
