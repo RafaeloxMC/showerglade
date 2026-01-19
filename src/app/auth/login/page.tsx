@@ -2,7 +2,7 @@ import Link from "next/link";
 
 function LoginPage() {
 	return (
-		<div className="min-w-screen min-h-screen">
+		<div className="w-full min-h-screen">
 			<main className="flex flex-col gap-4">
 				<h1 className="text-7xl font-extrabold">
 					Login to Showerglade

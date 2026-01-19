@@ -8,7 +8,7 @@ export default async function Home() {
 	const isLoggedIn = !!token;
 
 	return (
-		<div className="min-w-screen min-h-screen bg-[#123b49]">
+		<div className="w-full min-h-screen bg-[#123b49]">
 			<main className="flex flex-col gap-4 sm:p-4 md:p-16 lg:p-16">
 				<div className="flex flex-col items-center justify-center text-center">
 					{/* <h1 className="text-7xl font-extrabold">Showerglade</h1> */}

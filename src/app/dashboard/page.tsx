@@ -151,7 +151,7 @@ export default function Dashboard() {
 		);
 
 	return (
-		<div className="min-h-screen bg-[#123b49] text-white font-sans selection:bg-teal-100">
+		<div className="w-full min-h-screen bg-[#123b49] text-white font-sans selection:bg-teal-100">
 			<Header user={user} />
 
 			<main className="max-w-3xl mx-auto px-6 pb-20">
