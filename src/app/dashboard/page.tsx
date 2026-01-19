@@ -8,30 +8,21 @@ import { twMerge } from "tailwind-merge";
 import { IUser } from "@/database/schemas/User";
 import { useRouter } from "next/navigation";
 import Header from "@/components/dashboard/header";
+import CurrentlyShoweringDisplay from "@/components/dashboard/currentlyShowering";
+import { ISlot } from "@/database/schemas/Slot";
+import { Types } from "mongoose";
 
 function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-interface Slot {
-	_id: string;
-	startTime: string;
-	endTime: string;
-	isBooked: boolean;
-	userId: string | null;
-	bookedBy?: {
-		name: string;
-		avatar: string;
-	};
-}
-
 export default function Dashboard() {
 	const router = useRouter();
 
-	const [slots, setSlots] = useState<Slot[]>([]);
+	const [slots, setSlots] = useState<ISlot[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [user, setUser] = useState<IUser | null>(null);
-	const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+	const [selectedSlot, setSelectedSlot] = useState<ISlot | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const fetchSlots = async (silent = false) => {
@@ -40,12 +31,12 @@ export default function Dashboard() {
 			const res = await fetch("/api/v1/slots");
 			if (res.ok) {
 				const data = await res.json();
-				const resSlots = data.slots as Slot[];
+				const resSlots = data.slots as ISlot[];
 				setSlots(
 					resSlots
 						.filter(
 							(a) =>
-								new Date(a.startTime).getTime() >
+								new Date(a.endTime).getTime() >
 								new Date().getTime(),
 						)
 						.sort(
@@ -111,7 +102,8 @@ export default function Dashboard() {
 		}
 	};
 
-	const handleCancel = async (slotId: string) => {
+	const handleCancel = async (slotId: Types.ObjectId | undefined) => {
+		if (!slotId) return;
 		if (!confirm("Are you sure you want to cancel this booking?")) return;
 
 		setIsSubmitting(true);
@@ -136,7 +128,7 @@ export default function Dashboard() {
 		}
 	};
 
-	const myBooking = slots.find((s) => s.userId === user?._id.toString());
+	const myBooking = slots.find((s) => s.userId === user?._id);
 
 	if ((loading && !slots.length) || !user)
 		return (
@@ -164,6 +156,8 @@ export default function Dashboard() {
 						session.
 					</p>
 				</div>
+
+				<CurrentlyShoweringDisplay slots={slots} />
 
 				{myBooking && (
 					<div className="mb-10 bg-teal-800 rounded-2xl p-6 shadow-sm border border-teal-700 relative overflow-hidden group">
@@ -236,7 +230,7 @@ export default function Dashboard() {
 											slot.startTime;
 										return (
 											<div
-												key={slot.startTime}
+												key={slot.startTime.toString()}
 												className="relative group"
 											>
 												<button

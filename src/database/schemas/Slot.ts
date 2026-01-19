@@ -1,10 +1,15 @@
 import mongoose, { Model, model, Types } from "mongoose";
 
 export interface ISlot {
+	_id?: Types.ObjectId;
 	startTime: Date;
 	endTime: Date;
 	isBooked: boolean;
 	userId: Types.ObjectId;
+	bookedBy?: {
+		name: string;
+		avatar: string;
+	};
 }
 
 const slotSchema = new mongoose.Schema(

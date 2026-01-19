@@ -13,7 +13,11 @@ export async function GET() {
 
 		const formattedSlots = await Promise.all(
 			slots
-				.filter((a) => a.isBooked && new Date(a.startTime) > new Date())
+				.filter(
+					(a) =>
+						a.isBooked &&
+						new Date(a.endTime).getTime() > new Date().getTime(),
+				)
 				.map(async (slot) => {
 					const currentUser = (await User.findById(
 						slot.userId,
