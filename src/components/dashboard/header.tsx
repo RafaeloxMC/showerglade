@@ -1,6 +1,7 @@
+"use client";
 import { IUser } from "@/database/schemas/User";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
 
 export interface HeaderProps {
 	user: IUser;
@@ -16,21 +17,28 @@ function Header(props: HeaderProps) {
 
 	return (
 		<header className="flex justify-between items-center p-6 md:p-8 max-w-5xl mx-auto w-full">
-			<div className="flex items-center gap-3">
+			<Link className="flex items-center gap-3" href={"/dashboard"}>
 				<div className="h-8 w-8 bg-transparent rounded-lg flex items-center justify-center text-white font-bold text-lg">
 					🚿
 				</div>
 				<h1 className="text-xl font-bold tracking-tight">
 					Showerglade
 				</h1>
-			</div>
+			</Link>
 
 			<div className="flex items-center gap-4">
 				<div className="hidden md:flex flex-col items-end">
 					<span className="text-sm font-medium">
 						{props.user?.name}
 					</span>
-					<span className="text-xs text-neutral-300">
+					<span
+						className={`text-xs text-neutral-300 ${props.user?.isAdmin ? "cursor-pointer hover:underline" : ""}`}
+						onClick={() => {
+							if (props.user.isAdmin) {
+								router.push("/dashboard/admin");
+							}
+						}}
+					>
 						{props.user?.isAdmin ? "Admin" : "Attendee"}
 					</span>
 				</div>
