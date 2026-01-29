@@ -7,10 +7,6 @@ export async function POST(req: NextRequest) {
 
 	const user = await authenticateUser(req);
 
-	console.log(user);
-	console.log(user?.slackId);
-	console.log(user?.isAdmin);
-
 	if (!user || !user.slackId || !user.isAdmin) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
