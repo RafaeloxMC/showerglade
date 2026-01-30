@@ -22,7 +22,9 @@ export async function GET(req: NextRequest) {
 
 		await connectDB();
 
-		const slots = await Slot.find({}).sort({ startTime: 1 }).populate("userId");
+		const slots = await Slot.find({})
+			.sort({ startTime: 1 })
+			.populate("userId");
 
 		const formattedSlots = await Promise.all(
 			slots
@@ -37,10 +39,7 @@ export async function GET(req: NextRequest) {
 						startTime: slot.startTime,
 						endTime: slot.endTime,
 						isBooked: slot.isBooked,
-						userId:
-							slot.userId.toString() == user._id.toString()
-								? user._id
-								: null,
+						userId: slot.userId.equals(user._id) ? user._id : null,
 						bookedBy: slot.userId
 							? (slot.anonymized ?? true)
 								? {
@@ -48,9 +47,15 @@ export async function GET(req: NextRequest) {
 										avatar: "/showerglade.png",
 									}
 								: {
-											name: (slot.userId as unknown as BookingUser).name || "Anonymous",
-											avatar: (slot.userId as unknown as BookingUser).avatar || "/showerglade.png",
-										}
+										name:
+											(
+												slot.userId as unknown as BookingUser
+											).name || "Anonymous",
+										avatar:
+											(
+												slot.userId as unknown as BookingUser
+											).avatar || "/showerglade.png",
+									}
 							: undefined,
 						anonymized: slot.anonymized ?? true,
 					} as ISlot;

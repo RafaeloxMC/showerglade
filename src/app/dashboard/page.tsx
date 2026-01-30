@@ -133,7 +133,9 @@ export default function Dashboard() {
 		}
 	};
 
-	const myBooking = slots.find((s) => s.userId === user?._id);
+	const myBooking = slots
+		.filter((s) => s.userId)
+		.find((s) => s.userId.toString() == user?._id.toString());
 
 	if ((loading && !slots.length) || !user)
 		return (
