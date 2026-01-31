@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		const now = new Date(body.slotStart);
-		const cutoff = new Date(now.getTime() + slotDuration * 60 * 1000);
+		const cutoff = new Date(now.getTime() + slotDuration * 60 * 1000 - 1);
 
 		let slot = await Slot.findOne({
 			startTime: { $gte: now, $lte: cutoff },
