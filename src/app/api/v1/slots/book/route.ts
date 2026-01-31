@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 			anonymized = true;
 		}
 
-		const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+		const twentyFourHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
 		const existingBooking = await Slot.findOne({
 			userId: new Types.ObjectId(userId),
 			isBooked: true,
