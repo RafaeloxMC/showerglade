@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/database/db";
-import Slot from "@/database/schemas/Slot";
-import { Types } from "mongoose";
-import { slotDuration } from "@/lib/config";
-import { requireAuth } from "@/lib/auth";
+// import { connectDB } from "@/database/db";
+// import Slot from "@/database/schemas/Slot";
+// import { Types } from "mongoose";
+// import { slotDuration } from "@/lib/config";
+// import { requireAuth } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
 	try {
-		const authResult = await requireAuth(request);
+		return NextResponse.json(
+			{
+				message: "Overglade ended! Showers cannot be booked anymore!",
+			},
+			{ status: 200 },
+		);
+
+		/*		const authResult = await requireAuth(request);
 
 		if ("error" in authResult) {
 			return authResult.error;
@@ -88,7 +95,7 @@ export async function POST(request: NextRequest) {
 			anonymized: anonymized,
 		});
 
-		return NextResponse.json({ success: true, slot });
+		return NextResponse.json({ success: true, slot }); */
 	} catch (e) {
 		console.error("Book slot error:", e);
 		return NextResponse.json(
