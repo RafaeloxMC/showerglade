@@ -1,5 +1,11 @@
 # Showerglade
 
+## PLEASE READ!!!
+
+Hey, this site uses a whitelist! You can find a demo [here](https://www.youtube.com/watch?v=zPu-d0ANhqQ)!
+
+---
+
 A webapp made to help manage the usage of showers during Hack Clubs Overglade event in Singapore (2026).
 
 The webapp was / is being developed by [Lopa](https://github.com/Lopa-ok) and [xvcf](https://github.com/RafaeloxMC)
